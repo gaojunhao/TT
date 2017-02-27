@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    	<title>Swiper demo</title>
+    	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.json.js"></script>
+    </head>
+    <body>
+    <div><p align="center">Names:<textarea id="names" rows="4" cols="30" name="bad"></textarea></p></div>
+    <div><p align="center">Name:<input id="name" type="text"/></p></div>
+    <div><p align="center">增加:<input id="addName" type="submit" onclick="addName()"/></p></div>
+    <div><p align="center">删除:<input id="deleteName" type="submit" onclick="deleteName()"/></p></div>
+    <div><p align="center">清空姓名:<input id="clearName" type="submit" onclick="clearName()"/></p></div>
+    <div><p align="center">清空记录:<input id="clearRecord" type="submit" onclick="clearRecord()"/></p></div>
+    </body>
+    <script type="text/javascript">
+    init();
+    function init(){
+                $.ajax({
+                            type: "POST",
+                            url: "/MVC/getPer",
+                            dataType: "text",
+                            data: {//请求参数
+                            },
+                            success: function (data) {
+                                alert(data);
+                                var result = JSON.parse(data);
+                                var allNames=result.names;
+                                var allStr;
+                                for(var i=0;i<allNames.length;i++){
+                                	if(i==0){
+                                		allStr=allNames[i];
+                                	}else{
+                                	allStr+=allNames[i];
+                                	}
+                                	if(i<allNames.length-1){
+                                	allStr+=',';
+                                	}else{
+                                	}
+                                }
+                               $("#names").val(allStr);
+                            },
+                            error: function (jqXHR) {
+                                alert("出错，请稍后再试！");
+                            }
+                        });   
+    }
+    function addName(){
+    	$.ajax({
+            type: "POST",
+            url: "/MVC/add",
+            dataType: "text",
+            data: {"name" : $("#name").val()},
+            success: function (data) {
+            	init();
+            },
+            error: function (jqXHR) {
+            alert("出错，请稍后再试！");
+            }
+        });
+    }
+    function deleteName(){
+    	if($("#name").val()==''){
+    		alert("请输入姓名");
+    	}else{
+    	$.ajax({
+            type: "POST",
+            url: "/MVC/delete",
+            dataType: "text",
+            data: {"name" : $("#name").val()},
+            success: function (data) {
+            	init();
+            },
+            error: function (jqXHR) {
+            alert("出错，请稍后再试！");
+            }
+        });}
+    }
+    function clearName(){
+    	$.ajax({
+            type: "POST",
+            url: "/MVC/clearName",
+            dataType: "text",
+            data: {},
+            success: function (data) {
+            	init();
+            },
+            error: function (jqXHR) {
+            alert("出错，请稍后再试！");
+            }
+        });
+    }
+    function clearRecord(){
+    	$.ajax({
+            type: "POST",
+            url: "/MVC/clearRecord",
+            dataType: "text",
+            data:{//请求参数
+            },
+            success: function (data) {
+            	init();
+            },
+            error: function (jqXHR) {
+            alert("出错，请稍后再试！");
+            }
+        });
+    }
+    </script>
+</html>

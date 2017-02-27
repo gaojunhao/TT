@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    	<title>Swiper demo</title>
+    	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    </head>
+    <body>
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.json.js"></script>
+    </body>
+    <script type="text/javascript">
+    	var context='';
+        var beforeIn=new Array();
+        var afterIn=new Array();
+        var condition=new Array();
+        var satisfaction=new Array();
+        var bad=new Array();
+        var beforeInnum=0;
+        var afterInnum=0;
+        var conditionnum=0;
+        var satisfactionnum=0;
+        var badnum=0;
+    function zero(){
+    	beforeIn=null;
+        afterIn=null;
+        condition=null;
+        satisfaction=null;
+        bad=null;
+        beforeInnum=0;
+        afterInnum=0;
+        conditionnum=0;
+        satisfactionnum=0;
+        badnum=0;
+    }
+    $(document).ready(function () {
+                $.ajax({
+                            type: "POST",
+                            url: "/MVC/getPer",
+                            dataType: "text",
+                            data: {//请求参数
+                            },
+                            success: function (data) {
+                                alert(data);
+                                var result = JSON.parse(data);
+                                add(result.names);
+                            },
+                            error: function (jqXHR) {
+                                alert("出错，请稍后再试！");
+                            }
+                        });   
+            });
+function sendData(){
+		getValue();
+        var request=JSON.stringify({
+            "beforeInStr": beforeIn,
+            "afterInStr": afterIn,
+            "conditionStr": condition,
+            "satisfactionStr": satisfaction,
+            "badStr": bad
+        });
+/*         var encoded=$.toJSON(request);
+        var jsonStr=encoded; */
+        $.ajax({
+            type: "POST",
+            url: "/MVC/sendData",
+            dataType: "json",
+            data: request,
+            contentType:"application/json",
+            success: function (data) {
+            window.location.href="../MVC/end.html";
+            },
+            error: function (jqXHR) {
+            alert("出错，请稍后再试！");
+            }
+        });
+        zero();
+    };
+    function getValue(){
+        $('input:radio[name=beforeIn]:checked').each( function() {
+                            beforeIn[beforeInnum++]=$(this).val();
+                        });
+        $('input:radio[name=afterIn]:checked').each( function() {
+                            afterIn[afterInnum++]=$(this).val();
+                        });
+        $('input:radio[name=condition]:checked').each( function() {
+                            condition[conditionnum++]=$(this).val();
+                        });
+        $('input:radio[name=satisfaction]:checked').each( function() {
+                            satisfaction[satisfactionnum++]=$(this).val();
+                        });
+        $('textarea').each( function() {
+                            bad[badnum++]=$(this).val();
+                        });
+    }
+    function add(obj){
+    	for (var i = 0; i < obj.length; i++){
+            context+='<div><form><p align="center">'+obj[i]+'</p><p align="center">入党前表现:</p><p align="center">好: <input type="radio" name="beforeIn" value="Perfect"/> 较好: <input type="radio" name="beforeIn" value="Good"/> 一般: <input type="radio" name="beforeIn" value="Common"/></p><p align="center">入党后表现:</p><p align="center">好: <input type="radio" name="afterIn" value="Perfect"/> 较好: <input type="radio" name="afterIn" value="Good"/> 一般: <input type="radio" name="afterIn" value="Common"/></p><p align="center">是否符合党员条件:</p><p align="center">符合: <input type="radio" name="condition" value="Perfect"/> 较符合: <input type="radio" name="condition" value="Good"/> 不符合: <input type="radio" name="condition" value="Common"/></p><p align="center">你对该党员的满意度:</p><p align="center">满意: <input type="radio" name="satisfaction" value="Perfect"/> 较满意: <input type="radio" name="satisfaction" value="Good"/> 不满意: <input type="radio" name="satisfaction" value="Common"/></p><p align="center">该党员的不足:</p><p align="center"><textarea rows="3" cols="28" name="bad"></textarea></p></form></div>'
+    	};
+        $("body").append(context);
+        $("body").append('<p align="center"><input id="sendData" type="submit" name="sendData"onclick="sendData()"/></p>');
+    }
+    </script>
+</html>
